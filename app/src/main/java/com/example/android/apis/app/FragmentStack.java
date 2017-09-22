@@ -22,6 +22,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,7 +81,9 @@ public class FragmentStack extends Activity {
         // 到背部堆叠。on to the back stack.
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.replace(R.id.simple_fragment, newFragment);
-        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);// TRANSIT_FRAGMENT_FADE
+        ft.setCustomAnimations(R.anim.alpha_from_0_to_1,R.anim.alpha_from_1_to_0);
+//        ft.setCustomAnimations(R.anim.push_up_in, R.anim.push_up_out);
         ft.addToBackStack(null);
         ft.commit();
     }
@@ -112,6 +115,7 @@ public class FragmentStack extends Activity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             mNum = getArguments() != null ? getArguments().getInt("num") : 1;
+            Log.i("wang", this + ", onCreate mNum:"+mNum);
         }
 
         /**
@@ -121,12 +125,31 @@ public class FragmentStack extends Activity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
+            Log.i("wang", this + ", onCreateView  mNum:"+mNum);
             View v = inflater.inflate(R.layout.hello_world, container, false);
             View tv = v.findViewById(R.id.text);
             ((TextView)tv).setText("Fragment #" + mNum);
             tv.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.gallery_thumb));
             return v;
         }
+
+    @Override
+    public void onResume() {
+        Log.i("wang", this + ", onResume  mNum:"+mNum);
+        super.onResume();
     }
+
+    @Override
+    public void onPause() {
+        Log.i("wang", this + ", onPause  mNum:"+mNum);
+        super.onPause();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        Log.i("wang", this + ",setUserVisibleHint  mNum:"+mNum+", isVisibleToUser:"+isVisibleToUser);
+        super.setUserVisibleHint(isVisibleToUser);
+    }
+}
 //END_INCLUDE(fragment)
 }
